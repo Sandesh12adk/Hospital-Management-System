@@ -25,7 +25,9 @@ public class SecurityConfig {
   private Filter filter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable())
+        http     .cors(Customizer.withDefaults())
+                .csrf((csrf) ->
+                        csrf.disable())
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers(
                                         "/user/doctor/make_as_schelduded/{appointmentId}",
