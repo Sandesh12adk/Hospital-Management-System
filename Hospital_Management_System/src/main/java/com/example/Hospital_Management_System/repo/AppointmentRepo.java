@@ -1,5 +1,6 @@
 package com.example.Hospital_Management_System.repo;
 
+import com.example.Hospital_Management_System.constant.APPOINTMENT_STATUS;
 import com.example.Hospital_Management_System.model.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,5 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Integer>, Pa
 
     @Query(value = "select * from appointment where patient_id= :id",nativeQuery = true)
     public List<Appointment> findBYPatientId(@Param("id") int id);
+    List<Appointment> findByStatus(APPOINTMENT_STATUS status);
 }

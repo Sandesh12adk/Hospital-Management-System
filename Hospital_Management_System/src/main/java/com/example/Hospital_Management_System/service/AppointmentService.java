@@ -1,6 +1,7 @@
 package com.example.Hospital_Management_System.service;
 
 import com.example.Hospital_Management_System.constant.APPOINTMENT_STATUS;
+import com.example.Hospital_Management_System.dto.AppointmentDTO;
 import com.example.Hospital_Management_System.exception.ResourceNotFoundException;
 import com.example.Hospital_Management_System.model.Appointment;
 import com.example.Hospital_Management_System.repo.AppointmentRepo;
@@ -64,6 +65,35 @@ public class AppointmentService {
             if(days>10){
                 updateAppointmentStatusToCancled(appointment.getId());
             }
+        }
+    }
+
+    public List<AppointmentDTO> findAllForAPatient(int id,String status) {
+        try {
+            APPOINTMENT_STATUS appointment_Status = APPOINTMENT_STATUS.valueOf(status.trim().toUpperCase());
+       return appointmentRepo.findByStatus(appointment_Status).
+                stream()
+               .filter(appointment -> {return  appointment.getPatient()!=null;})
+               .filter(appointment -> {return  appointment.getDoctor()!=null;})
+               .filter(appointment -> {return appointment.getDate()!=null;})
+               .filter(appointment -> {return appointment.getTime()!=null;})
+               .filter(appointment -> {return appointment.getDate()!=null;})
+               .filter(appointment -> {return appointment.getPatient().getId()==id;})
+
+               .map(appointment -> {
+                   AppointmentDTO appointmentDTO = new AppointmentDTO();
+                   appointmentDTO.setAppointmentId(appointment.getId());
+                   appointmentDTO.setPatientId(appointment.getPatient().getId());
+                   appointmentDTO.setReason(appointment.getReason());
+                   appointmentDTO.setLocalTime(appointment.getTime());
+                   appointmentDTO.setAppointmentStatus(appointment.getStatus());
+                  appointmentDTO.setDoctorId(appointment.getDoctor().getId());
+                  appointmentDTO.setLocalDate(appointment.getDate());
+                  return appointmentDTO;
+               }).toList();
+        }catch (Exception ex){
+            throw new IllegalArgumentException("Invalid status provided: The valid appointment status are:" +
+                    " PENDING,SCHEDULDED,COMPLETED,CANCLED");
         }
     }
 }

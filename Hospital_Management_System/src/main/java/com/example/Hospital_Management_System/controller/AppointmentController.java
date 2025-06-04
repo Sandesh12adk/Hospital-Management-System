@@ -237,5 +237,24 @@ public class AppointmentController {
             appointmentDTO.setAppointmentStatus(appointment.getStatus());
             return appointmentDTO;
         }
+
+    @Operation(
+            summary = "Get all appointments",
+            description = "Returns a complete list of all appointments of a specific patient. Accessible by Patient only",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful Operation"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request - Invalid ID or parameters"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden - You do not have permission to access this resource"),
+                    @ApiResponse(responseCode = "404", description = "Not Found - No resource found with given ID"),
+                    @ApiResponse(responseCode = "409", description = "Conflict - Resource already exists or violates constraints"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")}
+    )
+    @GetMapping("/find_all_appointments_of_mine")
+        public ResponseEntity<List<AppointmentDTO>> findALlForAPatient(@RequestParam(required = true) String status){
+        int patientId= grantAccess.getAuthenticationUser().getPatient().getId();
+        return ResponseEntity.ok(appointmentService.findAllForAPatient(patientId,status));
+        }
     }
 
